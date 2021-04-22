@@ -1,15 +1,15 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, ButtonComponent } from 'obsidian';
 
-interface MyPluginSettings {
+interface PublishSettings {
   backendURL: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: PublishSettings = {
   backendURL: ''
 }
 
-export default class MyPlugin extends Plugin {
-  settings: MyPluginSettings;
+export default class Publish extends Plugin {
+  settings: PublishSettings;
 
   async onload() {
     console.log('loading plugin');
@@ -72,10 +72,10 @@ class PublishModal extends Modal {
   }
 
   onOpen() {
-    let {contentEl} = this;
-    let {titleEl} = this.titleEl;
-    titleEl.setText("Publ-ish - Manage");
-    contentEl.setText("AA")
+    let {contentEl,titleEl} = this;
+    titleEl.setText('Publish');
+    contentEl.setText('Changes');
+    let InitiateRepoButton = new ButtonComponent(vantageButtonsControlDiv)
   }
 
   onClose() {
@@ -84,10 +84,15 @@ class PublishModal extends Modal {
   }
 }
 
-class PublishSettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
+/*
+ * Bare repos: https://github.com/runarsf/dotfiles/wiki#clone-existing-dotfiles
+ * Modal example: https://github.com/ryanjamurphy/vantage-obsidian/blob/master/main.ts
+ */
 
-  constructor(app: App, plugin: MyPlugin) {
+class PublishSettingTab extends PluginSettingTab {
+  plugin: Publish;
+
+  constructor(app: App, plugin: Publish) {
     super(app, plugin);
     this.plugin = plugin;
   }

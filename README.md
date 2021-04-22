@@ -4,6 +4,10 @@ A ripoff of Obsidian Publish for poor people who want to selectively self-host t
 A backend + frontend will be provided later. This is just a PoC.
 I’m not a developer by any means, so this is subject to shitty code. I am also a cheap bugger, so I haven’t tested it on mobile.
 
+## Todo
+
+- [ ] Use git bare repos? This would make it more platform-agnostic. Maybe send a signal to the backend that it should update.
+
 ## Obsidian Sample Plugin
 
 This project uses Typescript to provide type checking and documentation.
