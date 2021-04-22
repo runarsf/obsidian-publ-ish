@@ -1,11 +1,13 @@
-## Obsidian Sample Plugin
+## Obsidian Publ-ish
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+A ripoff of Obsidian Publish for poor people who want to selectively self-host their notes.
+A backend + frontend will be provided later. This is just a PoC.
+I’m not a developer by any means, so this is subject to shitty code. I am also a cheap bugger, so I haven’t tested it on mobile.
+
+## Obsidian Sample Plugin
 
 This project uses Typescript to provide type checking and documentation.
 The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
-
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
 
 This sample plugin demonstrates some of the basic functionality the plugin API can do.
 - Changes the default font color to red using `styles.css`.
