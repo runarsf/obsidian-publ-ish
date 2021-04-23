@@ -6,7 +6,8 @@ I’m not a developer by any means, so this is subject to shitty code. I am also
 
 ## Todo
 
-- [ ] Use git bare repos? This would make it more platform-agnostic. Maybe send a signal to the backend that it should update.
+- [ ] Use git bare repos? This would make it more platform-agnostic. Maybe send a signal to the backend that it should update
+- [ ] Support #published tag to auto-publish (in yaml header)
 
 ## Obsidian Sample Plugin
 
@@ -14,6 +15,7 @@ This project uses Typescript to provide type checking and documentation.
 The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
 
 This sample plugin demonstrates some of the basic functionality the plugin API can do.
+
 - Changes the default font color to red using `styles.css`.
 - Adds a ribbon icon, which shows a Notice when clicked.
 - Adds a command "Open Sample Modal" which opens a Modal.

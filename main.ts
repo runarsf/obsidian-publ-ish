@@ -1,4 +1,7 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, ButtonComponent } from 'obsidian';
+//import 'nodegit';
+import 'path';
+import 'fs';
 
 interface PublishSettings {
   backendURL: string;
@@ -16,14 +19,14 @@ export default class Publish extends Plugin {
 
     await this.loadSettings();
 
-    this.addRibbonIcon('dice', 'Sample Plugin', () => {
+    this.addRibbonIcon('settings', 'Publ-ish', () => {
       new Notice('This is a notice!');
     });
 
-    this.addStatusBarItem().setText('Status Bar Text');
+    this.addStatusBarItem().setText('uwu');
 
     this.addCommand({
-      id: 'open-sample-modal',
+      id: 'open-publish-modal',
       name: 'Open Publish Modal',
       // callback: () => {
       //   console.log('Simple Callback');
@@ -73,9 +76,74 @@ class PublishModal extends Modal {
 
   onOpen() {
     let {contentEl,titleEl} = this;
+    //let publishPlugin = this.app.plugins.getPlugin("obsidian-publ-ish")
+
     titleEl.setText('Publish');
-    contentEl.setText('Changes');
-    let InitiateRepoButton = new ButtonComponent(vantageButtonsControlDiv)
+    let publishSettingsDiv = contentEl.createEl("div");
+
+    let publishStatusHeadingDiv = contentEl.createEl("h4", {
+      text: "Publish status",
+    });
+    publishStatusHeadingDiv.addClass("setting-item");
+    publishStatusHeadingDiv.addClass("setting-item-heading");
+    publishSettingsDiv.append(publishStatusHeadingDiv);
+
+    /*
+    let unstagedChangesDiv = contentEl.createEl("div");
+        unstagedChangesDiv.addClass("setting-item");
+    let unstagedChangesInfoDiv = contentEl.createEl("div");
+        unstagedChangesInfoDiv.addClass("setting-item-info");
+    let unstagedChangesControlDiv = contentEl.createEl("div");
+        unstagedChangesControlDiv.addClass("setting-item-control");
+    let unstagedChangesText = contentEl.createEl("span", {
+      text: "Unstaged items:",
+    });
+        unstagedChangesText.addClass("setting-item-name");
+    let unstagedChangesInput = contentEl.createEl("input", { type: "text" });
+    //noteTitleContainsInput.setAttr("style", "float: right; width: 50%");
+    unstagedChangesInfoDiv.append(unstagedChangesText);
+    unstagedChangesControlDiv.append(unstagedChangesInput);
+    unstagedChangesDiv.append(unstagedChangesInfoDiv);
+    unstagedChangesDiv.append(unstagedChangesControlDiv);
+    publishSettingsDiv.append(unstagedChangesDiv);
+    */
+
+    let unstagedDiv = contentEl.createEl("div");
+        unstagedDiv.addClass("setting-item");
+    let unstagedDetails = contentEl.createEl("details", {
+      text: "Unchanged",
+    });
+    let unstagedSummary = contentEl.createEl("summary", {
+      text: "Unchanged (select to unpublish)",
+    });
+    unstagedDetails.append(unstagedSummary);
+    unstagedDiv.append(unstagedDetails);
+    publishSettingsDiv.append(unstagedDiv);
+
+    let modifiedDiv = contentEl.createEl("div");
+    let modifiedDetails = contentEl.createEl("details", {
+      text: "Modified published files",
+    });
+    let modifiedSummary = contentEl.createEl("summary", {
+      text: "Published files - modified",
+    });
+    modifiedDetails.append(modifiedSummary);
+    modifiedDiv.append(modifiedDetails);
+    publishSettingsDiv.append(modifiedDiv);
+
+    /*let publishStatusHeadingDiv = contentEl.createEl("h2", {
+      text: "Publish status",
+    });*/
+
+    /*let publishButtonControlDiv = contentEl.createEl('div');
+    let initializeRepoButton = new ButtonComponent(publishButtonControlDiv)
+      .setButtonText("Publish")
+      .onClick(function () {
+        new Notice('Hi');
+        this.fancyShit = (this.app.workspace.activeLeaf);
+      });
+      */
+
   }
 
   onClose() {
@@ -87,6 +155,7 @@ class PublishModal extends Modal {
 /*
  * Bare repos: https://github.com/runarsf/dotfiles/wiki#clone-existing-dotfiles
  * Modal example: https://github.com/ryanjamurphy/vantage-obsidian/blob/master/main.ts
+ * NodeGit example: https://github.com/nodegit/nodegit/blob/master/examples/create-new-repo.js
  */
 
 class PublishSettingTab extends PluginSettingTab {
@@ -102,7 +171,7 @@ class PublishSettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl('h2', {text: 'Obsidian Publi-ish — Settings'});
+    containerEl.createEl('h2', {text: 'Obsidian Publ-ish — Settings'});
 
     new Setting(containerEl)
       .setName('Backend URL')
