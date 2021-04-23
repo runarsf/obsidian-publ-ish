@@ -19,7 +19,7 @@ export default class Publish extends Plugin {
 
     await this.loadSettings();
 
-    this.addRibbonIcon('settings', 'Publ-ish', () => {
+    this.addRibbonIcon('dice', 'Publ-ish', () => {
       new Notice('This is a notice!');
     });
 
