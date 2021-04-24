@@ -1,10 +1,14 @@
 import { App, Modal, addIcon, Notice, Plugin, PluginSettingTab, Setting, ButtonComponent } from 'obsidian';
-import { sidebarIcon, paperplaneIcon } from 'src/constants'
-//import 'nodegit';
+import { paperplaneIcon } from 'src/constants'
 import 'path';
 import 'fs';
+//import 'nodegit';
+//const Git = require("nodegit");
+import { Repository } from 'nodegit';
+//import * as Git from "nodegit";
 
 // https://github.com/reuseman/flashcards-obsidian/blob/main/src/constants.ts
+// https://github.com/Pseudonium/Obsidian_to_Anki/blob/master/main.ts
 
 interface PublishSettings {
   backendURL: string;
@@ -14,21 +18,33 @@ const DEFAULT_SETTINGS: PublishSettings = {
   backendURL: ''
 }
 
+var getMostRecentCommit = function (repository: any) {
+  return repository.getBranchCommit("master");
+};
+
+var getCommitMessage = function (commit: any) {
+  return commit.message();
+};
+
+
 export default class Publish extends Plugin {
   settings: PublishSettings;
 
   async onload() {
-    addIcon('paperplane', paperplaneIcon);
-
-    console.log('loading plugin');
-
     await this.loadSettings();
-
+    
+    addIcon('paperplane', paperplaneIcon);
     this.addRibbonIcon('paperplane', 'Publ-ish', () => {
-      new Notice('This is a notice!');
+      //new Notice('This is a notice!');
+      Repository.open("nodegit")
+        .then(getMostRecentCommit)
+        .then(getCommitMessage)
+        .then(function (message: any) {
+          new Notice(message);
+        });
     });
 
-    //this.addStatusBarItem().setText('uwu');
+    this.addStatusBarItem().setText('uwu');
 
     this.addCommand({
       id: 'open-publish-modal',
@@ -50,6 +66,7 @@ export default class Publish extends Plugin {
 
     this.addSettingTab(new PublishSettingTab(this.app, this));
 
+    /*
     this.registerCodeMirror((cm: CodeMirror.Editor) => {
       console.log('codemirror', cm);
     });
@@ -59,11 +76,12 @@ export default class Publish extends Plugin {
     });
 
     this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+    */
   }
 
-  onunload() {
+  /*onunload() {
     console.log('unloading publ-ish plugin');
-  }
+  }*/
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -80,13 +98,13 @@ class PublishModal extends Modal {
   }
 
   onOpen() {
-    let {contentEl,titleEl} = this;
+    const {contentEl,titleEl} = this;
     //let publishPlugin = this.app.plugins.getPlugin("obsidian-publ-ish")
 
     titleEl.setText('Publish');
-    let publishSettingsDiv = contentEl.createEl("div");
+    const publishSettingsDiv = contentEl.createEl("div");
 
-    let publishStatusHeadingDiv = contentEl.createEl("h4", {
+    const publishStatusHeadingDiv = contentEl.createEl("h4", {
       text: "Publish status",
     });
     publishStatusHeadingDiv.addClass("setting-item");
@@ -113,23 +131,23 @@ class PublishModal extends Modal {
     publishSettingsDiv.append(unstagedChangesDiv);
     */
 
-    let unstagedDiv = contentEl.createEl("div");
+    const unstagedDiv = contentEl.createEl("div");
         unstagedDiv.addClass("setting-item");
-    let unstagedDetails = contentEl.createEl("details", {
+    const unstagedDetails = contentEl.createEl("details", {
       text: "Unchanged",
     });
-    let unstagedSummary = contentEl.createEl("summary", {
+    const unstagedSummary = contentEl.createEl("summary", {
       text: "Unchanged (select to unpublish)",
     });
     unstagedDetails.append(unstagedSummary);
     unstagedDiv.append(unstagedDetails);
     publishSettingsDiv.append(unstagedDiv);
 
-    let modifiedDiv = contentEl.createEl("div");
-    let modifiedDetails = contentEl.createEl("details", {
+    const modifiedDiv = contentEl.createEl("div");
+    const modifiedDetails = contentEl.createEl("details", {
       text: "Modified published files",
     });
-    let modifiedSummary = contentEl.createEl("summary", {
+    const modifiedSummary = contentEl.createEl("summary", {
       text: "Published files - modified",
     });
     modifiedDetails.append(modifiedSummary);
