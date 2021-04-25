@@ -1,11 +1,12 @@
 import { App, Modal, addIcon, Notice, Plugin, PluginSettingTab, Setting, ButtonComponent } from 'obsidian';
-import { paperplaneIcon } from 'src/constants'
+import { paperplaneIcon } from 'src/constants';
 import 'path';
 import 'fs';
 //import 'nodegit';
 //const Git = require("nodegit");
-import { Repository } from 'nodegit';
+//import { Repository } from 'nodegit';
 //import * as Git from "nodegit";
+//import { CheckStatus } from './src/git';
 
 // https://github.com/reuseman/flashcards-obsidian/blob/main/src/constants.ts
 // https://github.com/Pseudonium/Obsidian_to_Anki/blob/master/main.ts
@@ -18,31 +19,25 @@ const DEFAULT_SETTINGS: PublishSettings = {
   backendURL: ''
 }
 
-var getMostRecentCommit = function (repository: any) {
-  return repository.getBranchCommit("master");
-};
-
-var getCommitMessage = function (commit: any) {
-  return commit.message();
-};
-
-
 export default class Publish extends Plugin {
   settings: PublishSettings;
 
   async onload() {
     await this.loadSettings();
+
+    /*await CheckStatus() /*.then((msg) => {
+      new Notice();
+    });*/
     
+    /*
     addIcon('paperplane', paperplaneIcon);
     this.addRibbonIcon('paperplane', 'Publ-ish', () => {
       //new Notice('This is a notice!');
-      Repository.open("nodegit")
-        .then(getMostRecentCommit)
-        .then(getCommitMessage)
-        .then(function (message: any) {
-          new Notice(message);
-        });
+      await CheckStatus().then((msg) => {
+        new Notice(msg);
+      });
     });
+    */
 
     this.addStatusBarItem().setText('uwu');
 
