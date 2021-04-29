@@ -1,3 +1,4 @@
+/*
 import { Repository } from "nodegit";
 
 var getMostRecentCommit = function (repository: any) {
@@ -16,3 +17,4 @@ export async function CheckStatus () {
       console.log(message);
     });
 }
+*/
