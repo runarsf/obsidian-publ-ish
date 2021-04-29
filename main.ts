@@ -1,28 +1,59 @@
-import { App, Modal, addIcon, Notice, Plugin, PluginSettingTab, Setting, ButtonComponent } from 'obsidian';
-import { paperplaneIcon } from 'src/constants';
+import {
+  App,
+  Modal,
+  addIcon,
+  Notice,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+  ButtonComponent,
+  FuzzySuggestModal,
+} from "obsidian";
+import { paperplaneIcon, verifyURIRegex } from "src/constants";
 import 'path';
 import 'fs';
-import simpleGit, { FileStatusResult, SimpleGit } from "simple-git";
+import simpleGit, {
+  FileStatusResult,
+  SimpleGit,
+  SimpleGitOptions,
+} from "simple-git";
+
+// https://github.com/denolehov/obsidian-git/blob/master/main.ts
 
 interface PublishSettings {
   backendURL: string;
+  commitMessage: string;
 }
 
 const DEFAULT_SETTINGS: PublishSettings = {
-  backendURL: ''
+  backendURL: '',
+  commitMessage: ''
 }
+
+const gitOptions: Partial<SimpleGitOptions> = {
+  baseDir: process.cwd(),
+  binary: "git",
+  maxConcurrentProcesses: 6,
+};
 
 export default class Publish extends Plugin {
   settings: PublishSettings;
+  git: SimpleGit = simpleGit(gitOptions);
 
   async onload() {
     await this.loadSettings();
 
-    this.addStatusBarItem().setText('uwu');
+    this.addCommand({
+      id: "get-process-cwd",
+      name: "Get Process CWD",
+      callback: () => {
+        new Notice(process.cwd());
+      }
+    })
 
     this.addCommand({
-      id: 'open-publish-modal',
-      name: 'Open Publish Modal',
+      id: "open-publish-modal",
+      name: "Open Publish Modal",
       checkCallback: (checking: boolean) => {
         let leaf = this.app.workspace.activeLeaf;
         if (leaf) {
@@ -32,7 +63,21 @@ export default class Publish extends Plugin {
           return true;
         }
         return false;
-      }
+      },
+    });
+
+    this.addCommand({
+      id: "publish-list-changed-files",
+      name: "List modified files",
+      callback: async () => {
+        const status = await this.git.status();
+        //new ChangedFilesModal(this, status.files).open();
+        let fileArray: string[] = []
+        status.files.forEach(file => {
+          fileArray.push(file.path);
+        })
+        new Notice(fileArray.join(', '));
+      },
     });
 
     this.addSettingTab(new PublishSettingTab(this.app, this));
@@ -53,9 +98,9 @@ class PublishModal extends Modal {
   }
 
   onOpen() {
-    const {contentEl,titleEl} = this;
+    const { contentEl, titleEl } = this;
 
-    titleEl.setText('Publish');
+    titleEl.setText("Publish");
     const publishSettingsDiv = contentEl.createEl("div");
 
     const publishStatusHeadingDiv = contentEl.createEl("h4", {
@@ -66,9 +111,9 @@ class PublishModal extends Modal {
     publishSettingsDiv.append(publishStatusHeadingDiv);
 
     const unstagedDiv = contentEl.createEl("div");
-        unstagedDiv.addClass("setting-item");
+    unstagedDiv.addClass("setting-item");
     const unstagedDetails = contentEl.createEl("details", {
-      text: "Unchanged",
+      text: "bruh"
     });
     const unstagedSummary = contentEl.createEl("summary", {
       text: "Unchanged (select to unpublish)",
@@ -90,7 +135,7 @@ class PublishModal extends Modal {
   }
 
   onClose() {
-    let {contentEl} = this;
+    let { contentEl } = this;
     contentEl.empty();
   }
 }
@@ -104,23 +149,40 @@ class PublishSettingTab extends PluginSettingTab {
   }
 
   display(): void {
-    let {containerEl} = this;
+    let { containerEl } = this;
 
     containerEl.empty();
-
-    containerEl.createEl('h2', {text: 'Obsidian Publ-ish — Settings'});
+    containerEl.createEl("h2", { text: "Obsidian Publ-ish — Settings" });
 
     new Setting(containerEl)
-      .setName('Backend URL')
-      .setDesc('The location of your backend.')
-      .addText(text => text
-        .setPlaceholder('https://publish.domain.tld/api')
-        .setValue(this.plugin.settings.backendURL)
-        .onChange(async (value) => {
-          // TOOD: Verify and sanitize the URL
-          console.log('Applied backend URL: ' + value);
-          this.plugin.settings.backendURL = value;
-          await this.plugin.saveSettings();
-        }));
+      .setName("Backend URL")
+      .setDesc("The location of your backend.")
+      .addText((text) =>
+        text
+          .setPlaceholder("https://publish.domain.tld/api")
+          .setValue(this.plugin.settings.backendURL)
+          .onChange(async (backendURL) => {
+            // TOOD: Verify and sanitize the URL
+            const uriRegex = new RegExp(verifyURIRegex);
+            if (uriRegex.test(backendURL)) {
+              //new Notice("Applied backend URL: " + backendURL);
+              this.plugin.settings.backendURL = backendURL;
+              await this.plugin.saveSettings();
+            }
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Commit Message")
+      .setDesc("The format of the commit message.")
+      .addText((text) =>
+        text
+          .setPlaceholder("modified published notes")
+          .setValue(this.plugin.settings.commitMessage)
+          .onChange(async (commitMessage) => {
+              this.plugin.settings.commitMessage = commitMessage;
+              await this.plugin.saveSettings();
+          })
+      );
   }
 }
