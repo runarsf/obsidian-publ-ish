@@ -22,6 +22,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "simple-git": "^2.38.0"
+    "simple-git": "^2.38.0",
+    "supports-color": "^9.0.0"
   }
 }

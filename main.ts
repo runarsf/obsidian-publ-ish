@@ -8,6 +8,7 @@ import {
   Setting,
   ButtonComponent,
   FuzzySuggestModal,
+  FileSystemAdapter,
 } from "obsidian";
 import { paperplaneIcon, verifyURIRegex } from "src/constants";
 import 'path';
@@ -30,15 +31,9 @@ const DEFAULT_SETTINGS: PublishSettings = {
   commitMessage: ''
 }
 
-const gitOptions: Partial<SimpleGitOptions> = {
-  baseDir: process.cwd(),
-  binary: "git",
-  maxConcurrentProcesses: 6,
-};
-
 export default class Publish extends Plugin {
   settings: PublishSettings;
-  git: SimpleGit = simpleGit(gitOptions);
+  git: SimpleGit;
 
   async onload() {
     await this.loadSettings();
@@ -48,8 +43,8 @@ export default class Publish extends Plugin {
       name: "Get Process CWD",
       callback: () => {
         new Notice(process.cwd());
-      }
-    })
+      },
+    });
 
     this.addCommand({
       id: "open-publish-modal",
@@ -72,15 +67,38 @@ export default class Publish extends Plugin {
       callback: async () => {
         const status = await this.git.status();
         //new ChangedFilesModal(this, status.files).open();
-        let fileArray: string[] = []
-        status.files.forEach(file => {
+        let fileArray: string[] = [];
+        status.files.forEach((file) => {
           fileArray.push(file.path);
-        })
-        new Notice(fileArray.join(', '));
+        });
+        new Notice(fileArray.join(", "));
       },
     });
 
     this.addSettingTab(new PublishSettingTab(this.app, this));
+  }
+
+  async init(): Promise<void> {
+    try {
+      const adapter = this.app.vault.adapter as FileSystemAdapter;
+      const path = adapter.getBasePath();
+
+      const gitOptions: Partial<SimpleGitOptions> = {
+        baseDir: path,
+        binary: "git",
+        maxConcurrentProcesses: 6,
+      };
+      this.git = simpleGit(gitOptions);
+
+      const isValidRepo = await this.git.checkIsRepo();
+
+      if (!isValidRepo) {
+        new Notice("Valid git repository not found.");
+      }
+    } catch (error) {
+      new Notice(error);
+      console.error(error);
+    }
   }
 
   async loadSettings() {
