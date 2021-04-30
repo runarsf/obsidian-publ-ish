@@ -118,6 +118,25 @@ class PublishModal extends Modal {
   onOpen() {
     const { contentEl, titleEl } = this;
 
+    /*
+    <title>Publish</title>
+    <div>
+      <h4>Publish status</h4>
+      <div class="settings-item">
+        <details>
+          bruh
+          <summary>Unchanged (select to unpublish)</summary>
+        </details>
+      </div>
+      <div>
+        <details>
+          Modified published files
+          <summary>Publish files - modified</summary>
+        </details>
+      </div>
+    </div>
+    */
+
     titleEl.setText("Publish");
     const publishSettingsDiv = contentEl.createEl("div");
 
