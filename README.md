@@ -1,8 +1,7 @@
 ## Obsidian Publ-ish
 
 A ripoff of Obsidian Publish for poor people who want to selectively self-host their notes.
-A backend + frontend will be provided later. This is just a (not currently working) PoC.
-This is my first interaction with TypeScript, so the project is subject to shitty code. I am also a cheap bugger, so I haven’t tested it on mobile.
+This is currently just PoC and I will be expanding on it in the future. The notes will be published to a git repository using git bare repositories, this will let the user decide the "frontend" for the notes, like Jekyll.
 
 ### How to use
 

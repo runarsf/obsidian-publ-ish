@@ -22,12 +22,12 @@ import simpleGit, {
 // https://github.com/denolehov/obsidian-git/blob/master/main.ts
 
 interface PublishSettings {
-  backendURL: string;
+  remoteURL: string;
   commitMessage: string;
 }
 
 const DEFAULT_SETTINGS: PublishSettings = {
-  backendURL: '',
+  remoteURL: '',
   commitMessage: ''
 }
 
@@ -192,18 +192,18 @@ class PublishSettingTab extends PluginSettingTab {
     containerEl.createEl("h2", { text: "Obsidian Publ-ish — Settings" });
 
     new Setting(containerEl)
-      .setName("Backend URL")
-      .setDesc("The location of your backend.")
+      .setName("Remote URL")
+      .setDesc("The remote URL of your git repository.")
       .addText((text) =>
         text
-          .setPlaceholder("https://publish.domain.tld/api")
-          .setValue(this.plugin.settings.backendURL)
-          .onChange(async (backendURL) => {
+          .setPlaceholder("git@githost.tld:user/repo.git")
+          .setValue(this.plugin.settings.remoteURL)
+          .onChange(async (remoteURL) => {
             // TOOD: Verify and sanitize the URL
             const uriRegex = new RegExp(verifyURIRegex);
-            if (uriRegex.test(backendURL)) {
-              //new Notice("Applied backend URL: " + backendURL);
-              this.plugin.settings.backendURL = backendURL;
+            if (uriRegex.test(remoteURL)) {
+              //new Notice("Applied backend URL: " + remoteURL);
+              this.plugin.settings.remoteURL = remoteURL;
               await this.plugin.saveSettings();
             }
           })
